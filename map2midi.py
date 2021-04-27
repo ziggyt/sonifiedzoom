@@ -1,8 +1,15 @@
+from time import sleep
+
 import mido
 
-msg = mido.Message('note_on', note=60)
+port = mido.open_output('Sonified Zoom', virtual=True)
 
-port = mido.open_output('New Port', virtual=True)
+for i in range(60):
+    msg = mido.Message('note_on', note=60 + i)
+    port.send(msg)
+    sleep(0.5)
+    msg = mido.Message('note_off', note=60 + i)
+    port.send(msg)
+    sleep(0.1)
 
-while True:
-    pass
+
