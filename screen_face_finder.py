@@ -20,6 +20,7 @@ def main():
         faces = face_cascade.detectMultiScale(screen, 1.35, 5)
 
         for (x, y, w, h) in faces:
+            print(x)
 
             cv2.rectangle(screen, (x, y), (x + w, y + h), (255, 255, 0), 2)
 
