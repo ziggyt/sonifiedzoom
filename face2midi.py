@@ -14,7 +14,7 @@ X_MAX = 2560
 
 MIDI_MAX = 80
 
-virtual_midi_out = mido.open_output('Sonified Zoom 2', virtual=True)
+virtual_midi_out = mido.open_output('Sonified Zoom', virtual=True)
 
 
 def send_midi_note(note: int, state: bool = True):
@@ -33,9 +33,11 @@ def x_coordinate_to_midi(coordinate):
 
     return mapped_value
 
+
 def turn_off_all_notes():
     for i in range(127):
         send_midi_note(i, False)
+
 
 def main():
     while True:
@@ -56,9 +58,9 @@ def main():
 
             send_midi_note(x_coordinate_to_midi(face[0]))
 
-            sleep(3)
+            # sleep(3)
 
-            turn_off_all_notes()
+            # turn_off_all_notes()
 
 
 main()
