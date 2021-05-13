@@ -17,11 +17,9 @@ X_MAX = 2560
 
 MIDI_MAX = 80
 
-COORD_DISTANCE_TOLERANCE = 20
+COORD_DISTANCE_TOLERANCE = 10
 
 vcv_midi_device = MidiDevice()
-
-old_heads = []
 
 
 def x_coordinate_to_midi(coordinate):
@@ -43,9 +41,11 @@ def y_coordinate_to_midi(coordinate):
 
 
 def main():
-    global old_heads
-    channel_counter = 0
+    channel_counter = 15
+
+    old_heads = []
     heads = []
+
     while True:
         screen = np.array(ImageGrab.grab(bbox=(X_MIN, Y_MIN, X_MAX, Y_MAX)))
         faces = face_cascade.detectMultiScale(screen, 1.35, 5)
@@ -55,30 +55,67 @@ def main():
             for (x, y, w, h) in faces:
                 face = Face(x, y, w, h)
 
-                face.x_channel = channel_counter
-                channel_counter += 1
-                face.y_channel = channel_counter
-                channel_counter += 1
-
                 # cv2.rectangle(screen, (face.x, face.y), (face.x + face.width, face.y + face.height), (255, 255, 0), 2)
                 heads.append(face)
 
             for face in heads:
+                for face2 in heads:
+                    if face.x == face2.x:
+                        face.flagged = True
+
+            for face in heads:
+                if face.flagged:
+                    heads.remove(face)
+                    print("removed face")
+
+            for face in old_heads:
+                for face2 in old_heads:
+                    if face.x == face2.x:
+                        face.flagged = True
+
+            for face in old_heads:
+                if face.flagged:
+                    old_heads.remove(face)
+                    print("removed face")
+
+            for face in heads:
                 if len(old_heads) > 0:
                     for old_face in old_heads:
-                        if abs(face.x - old_face.x < COORD_DISTANCE_TOLERANCE):
-                            print('found the same face')
-                            vcv_midi_device.send_cc_message(channel=old_face.x_channel,
-                                                            value=x_coordinate_to_midi(face.x))
-                            vcv_midi_device.send_cc_message(channel=old_face.y_channel,
-                                                            value=y_coordinate_to_midi(face.y))
+                        if abs(face.x - old_face.x) < COORD_DISTANCE_TOLERANCE:
 
-                            face.x_channel = old_face.x_channel
-                            face.y_channel = old_face.y_channel
+                            if old_face.y_channel == -1 and channel_counter >= 0:
+                                old_face.x_channel = channel_counter
+                                channel_counter -= 1
+                                old_face.y_channel = channel_counter
+                                channel_counter -= 1
 
-            old_heads = heads.copy()
+                            if old_face.y_channel != -1:
+
+                                print(f'found the same face with channels {old_face.x_channel}, {old_face.y_channel}')
+                                vcv_midi_device.send_midi_note_to_channel(channel=old_face.x_channel,
+                                                                          note=x_coordinate_to_midi(face.x))
+
+                                vcv_midi_device.send_midi_note_to_channel(channel=old_face.y_channel,
+                                                                          note=y_coordinate_to_midi(face.y))
+
+                                old_face.x = face.x
+                                old_face.y = face.y
+
+                                # face.x_channel = old_face.x_channel
+                                # face.y_channel = old_face.y_channel
+
+                                face.flagged = True
+
+            for face in heads:
+                if face.flagged:
+                    heads.remove(face)
+                    print("removed face")
+
+            old_heads += heads
+
+            print(old_heads)
             heads.clear()
-            channel_counter = 0
+
 
             # cv2.imshow('img', screen)
 

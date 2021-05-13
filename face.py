@@ -7,8 +7,9 @@ class Face:
     y: int
     height: int
     width: int
-    x_channel = 0
-    y_channel = 0
+    x_channel = -1
+    y_channel = -1
+    flagged = False
 
 
 
