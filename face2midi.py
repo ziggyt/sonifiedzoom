@@ -12,7 +12,8 @@ Y_MAX = 1440
 X_MIN = 0
 X_MAX = 2560
 
-MIDI_MAX = 80
+MIDI_MIN = 40
+MIDI_MAX = 90
 
 virtual_midi_out = mido.open_output('Sonified Zoom 2', virtual=True)
 
@@ -20,7 +21,7 @@ virtual_midi_out = mido.open_output('Sonified Zoom 2', virtual=True)
 def send_midi_note(note: int, state: bool = True):
     midi_state = 'note_on' if state else 'note_off'
 
-    msg = mido.Message(midi_state, note=note)
+    msg = mido.Message(midi_state, note=note, velocity = note)
 
     virtual_midi_out.send(msg)
 
