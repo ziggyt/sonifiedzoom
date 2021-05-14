@@ -57,7 +57,7 @@ def main():
 
             send_midi_note(x_coordinate_to_midi(face[0]))
 
-            sleep(3)
+            sleep(0.5)
 
             turn_off_all_notes()
 
