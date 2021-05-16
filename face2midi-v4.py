@@ -9,6 +9,7 @@ from midi_device import MidiDevice
 
 face_cascade = cv2.CascadeClassifier(r'haarcascade_frontalface_default.xml')
 
+DELAY = 0.8
 Y_MIN = 0
 Y_MAX = 1440
 
@@ -120,9 +121,7 @@ def main():
                 cv2.destroyAllWindows()
                 break
 
-            # sleep(3)
-
-            # turn_off_all_notes()
+            sleep(DELAY)
 
 
 main()
