@@ -9,11 +9,11 @@ from midi_device import MidiDevice
 
 face_cascade = cv2.CascadeClassifier(r'haarcascade_frontalface_default.xml')
 
-Y_MIN = 0
-Y_MAX = 1440
+Y_MIN = 200
+Y_MAX = 1000
 
-X_MIN = 0
-X_MAX = 2560
+X_MIN = 450
+X_MAX = 2100
 
 MIDI_MIN = 40
 MIDI_MAX = 90
@@ -98,6 +98,11 @@ def main():
             x_note = translate_x_to_midi(face.x)
             y_note = translate_y_to_midi(face.y)
 
+            vcv_midi_device.send_midi_velocity_note_to_channel(x_note, channel=0)
+            print(f'SENT VALUE {x_note} TO CHANNEL 0 (X AXIS)')
+            vcv_midi_device.send_midi_velocity_note_to_channel(y_note, channel=1)
+            print(f'SENT VALUE {y_note} TO CHANNEL 1 (Y AXIS)')
+
             if old_face.x != 0:
                 diff_val = abs(face.x - old_face.x)
 
@@ -105,14 +110,11 @@ def main():
                     diff_note = translate_diff_to_midi(diff_val ** 1.2)
 
                     vcv_midi_device.send_midi_velocity_note_to_channel(int(diff_note), channel=2)
-                    print(f'SENT VALUE {diff_note} TO CHANNEL 2')
+                    print(f'SENT VALUE {diff_note} TO CHANNEL 2 (SPEED)')
                 except:
                     print('Something went wrong when parsing movement rate')
 
-            vcv_midi_device.send_midi_velocity_note_to_channel(x_note, channel=0)
-            print(f'SENT VALUE {x_note} TO CHANNEL 0')
-            vcv_midi_device.send_midi_velocity_note_to_channel(y_note, channel=1)
-            print(f'SENT VALUE {y_note} TO CHANNEL 1')
+
 
             old_face = face
 
@@ -123,6 +125,5 @@ def main():
             # sleep(3)
 
             # turn_off_all_notes()
-
 
 main()
