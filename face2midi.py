@@ -1,5 +1,3 @@
-import mido
-from time import sleep
 from PIL import ImageGrab
 import cv2
 import numpy as np
@@ -29,23 +27,6 @@ def x_coordinate_to_midi(coordinate):
 
     return mapped_value
 
-
-# def y_coordinate_to_midi(coordinate):
-#     value = float(coordinate) / float(Y_MAX)
-#
-#     mapped_value = int(value * MIDI_MAX)
-#     print(mapped_value)
-#
-#     return mapped_value
-#
-#
-# def x_coordinate_to_midi(coordinate):
-#     value = float(coordinate) / float(X_MAX)
-#
-#     mapped_value = int(value * MIDI_MAX)
-#     print(mapped_value)
-#
-#     return mapped_value
 
 def translate_x_to_midi(value):  # https://stackoverflow.com/questions/1969240/mapping-a-range-of-values-to-another
     # Figure out how 'wide' each range is
@@ -119,16 +100,11 @@ def main():
                 except:
                     print('Something went wrong when parsing movement rate')
 
-
-
             old_face = face
 
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 cv2.destroyAllWindows()
                 break
 
-            # sleep(3)
-
-            # turn_off_all_notes()
 
 main()
