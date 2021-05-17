@@ -95,13 +95,18 @@ def main():
                 face = Face(x, y, w, h)
                 break
 
-            x_note = translate_x_to_midi(face.x)
-            y_note = translate_y_to_midi(face.y)
+            try:
 
-            vcv_midi_device.send_midi_velocity_note_to_channel(x_note, channel=0)
-            print(f'SENT VALUE {x_note} TO CHANNEL 0 (X AXIS)')
-            vcv_midi_device.send_midi_velocity_note_to_channel(y_note, channel=1)
-            print(f'SENT VALUE {y_note} TO CHANNEL 1 (Y AXIS)')
+                x_note = translate_x_to_midi(face.x)
+                y_note = translate_y_to_midi(face.y)
+
+                vcv_midi_device.send_midi_velocity_note_to_channel(x_note, channel=0)
+                print(f'SENT VALUE {x_note} TO CHANNEL 0 (X AXIS)')
+                vcv_midi_device.send_midi_velocity_note_to_channel(y_note, channel=1)
+                print(f'SENT VALUE {y_note} TO CHANNEL 1 (Y AXIS)')
+
+            except:
+                print("Something went wrong sending midi to x,y channels")
 
             if old_face.x != 0:
                 diff_val = abs(face.x - old_face.x)
